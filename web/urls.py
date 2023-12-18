@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import re_path
 from web.views import account
 
 urlpatterns = [
-    path(r'register/$', account.register, name='register')
+    re_path(r'^register/$', account.register)
 ]
