@@ -17,7 +17,7 @@
 {% block content %}
     <div class="account">
         <div class="title">用户注册</div>
-        <form id="form" method="POST" novalidate>
+        <form id="regForm" method="POST" novalidate>
             {% csrf_token %}
             {% for field in form %}
                 {% if field.name == 'code' %}
@@ -46,7 +46,7 @@
 
             <div class="row">
                 <div class="col-xs-3">
-                    <input type="button" class="btn btn-primary" value="注  册"/>
+                    <input id="btnSubmit" type="button" class="btn btn-primary" value="注  册"/>
                 </div>
             </div>
 
@@ -61,7 +61,32 @@
         //页面框架加载完成后自动执行函数
         $(function () {
             bindClickSmsBtn();
+            bindClickSubmit();
         });
+
+        //点击提交注册
+        function bindClickSubmit() {
+            $('#btnSubmit').click(function () {
+                $('.error-msg').empty();
+                //收集表单中的数据
+                //数据ajax发送到后台
+                $.ajax({
+                    url: {% url 'register' %},
+                    type: "POST",
+                    data: $('#regForm').serialize(),
+                    dataType: "JSON",
+                    success:function (res){
+                        if (res.status){
+                            location.href = res.data;
+                        }else {
+                            $.each(res.error,function (key , value) {
+                                $("id_"+key).next().text(value[0]);
+                            })
+                        }
+                    }
+                })
+            })
+        }
 
         //点击获取验证码的按钮绑定事件
         function bindClickSmsBtn() {
@@ -92,6 +117,7 @@
             })
         }
 
+        //倒计时
         function sendSmsRemind() {
             var $smsBtn = $('#btnSms');
             $smsBtn.prop('disabled', true);//禁用

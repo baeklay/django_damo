@@ -4,7 +4,6 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 from qcloudsms_py import SmsMultiSender, SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
-
 from django.conf import settings
 
 

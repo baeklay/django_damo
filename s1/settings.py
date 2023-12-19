@@ -136,10 +136,10 @@ CACHES = {
 }
 TENCENT_SMS_APP_ID = 1400875351
 TENCENT_SMS_APP_KEY = "bccb1ceb04e0cdf453546fb64eda536f"
-TENCENT_SMS_SIGN = "Python之路"
+TENCENT_SMS_SIGN = "贝酷蕾的小小基地公众号"
 TENCENT_SMS_TEMPLATE = {
-    'register': 548760,
-    'login': 548762
+    'register': 2023499,
+    'login': 2023500,
 }
 
 # 导入local_settings
