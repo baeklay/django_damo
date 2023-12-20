@@ -155,21 +155,50 @@ class LoginSMSForm(BootStrapForm, forms.Form):
             raise ValidationError('手机号不存在')
 
         return mobile_phone
+
     def clean_code(self):
-        code=self.cleaned_data['code']
-        mobile_phone=self.cleaned_data.get('mobile_phone')
+        code = self.cleaned_data['code']
+        mobile_phone = self.cleaned_data.get('mobile_phone')
 
         if not mobile_phone:
             return code
 
-        conn=get_redis_connection()
+        conn = get_redis_connection()
         redis_code = conn.get(mobile_phone)
         if not redis_code:
             raise ValidationError('验证码失效或未发送，请重新发送')
 
-        redis_str_code =redis_code.decode('utf-8')
+        redis_str_code = redis_code.decode('utf-8')
 
-        if code.strip()!=redis_str_code:
+        if code.strip() != redis_str_code:
             raise ValidationError('验证码错误，请重新输入')
+
+        return code
+
+
+class LoginForm(BootStrapForm, forms.Form):
+    username = forms.CharField(label='邮箱或手机号')
+    password = forms.CharField(label='密码', widget=forms.PasswordInput(render_value=True))
+    code = forms.CharField(label='图片验证码')
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean_password(self):
+        pwd = self.cleaned_data['password']
+        return encrypt.md5(pwd)
+
+    def clean_code(self):
+        # 验证图片验证码是否正确
+        code = self.cleaned_data['code']
+
+        # 去session获取自己的验证码
+        session_code = self.request.session.get('image_code')
+        if not session_code:
+            raise ValidationError('验证码过期，请重新获取')
+
+        if code.strip().upper() != session_code.strip().upper():
+            raise ValidationError('验证码输入错误')
 
         return code
