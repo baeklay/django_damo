@@ -143,6 +143,15 @@ TENCENT_SMS_TEMPLATE = {
     'login': 2023500,
 }
 
+# 登录白名单：无需登录就可以访问的页面
+WHITE_REGEX_URL_LIST = [
+    "/register/",
+    "/send/sms/",
+    "/login/",
+    "/image/code/",
+    "/index/",
+]
+
 # 导入local_settings
 try:
     from .local_settings import *
